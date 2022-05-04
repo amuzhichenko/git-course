@@ -1,0 +1,24 @@
+name: Check remote hostd and push reports
+
+on:
+  push:
+    branches:
+      - master
+
+
+    jobs:
+      prepare:
+        runs-on: ubuntu-latest
+            steps:
+              - name: Install netcat
+                run: sudo apt update && sudo apt install -y netcat
+              - run: echo "netcat has been installed"
+                |
+                nc -z -v -w2 onliner.by 443 > nc_report.log 2>&1
+                ls -la
+- name: Upload report
+  users: actions/upload-artifact@v2
+  with:
+    path: ${{ matrix.check-sites }}.log
+
+
