@@ -1,0 +1,30 @@
+name: f1
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test_changed_files
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Changed_files
+        id: changed-files
+        uses: tj-actions/changed-files@v14.1
+
+      - name: All_changed_files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$files was changed" >> files_changed.log 2>&1
+            echo "Count Tab in files: `grep -P '\t' $file | wc -l`" >> files_changed.log 2>&1
+          done
+      - name: Upload report
+        uses: actions/upload-artifact@v2
+        with:
+          path: files_changed.log
